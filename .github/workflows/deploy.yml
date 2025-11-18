@@ -13,12 +13,6 @@ on:
         description: "SSH Port"
         required: false
         default: "22"
-      ssh_key:
-        description: "SSH Private Key (PEM / OpenSSH format)"
-        required: true
-      env_file:
-        description: "Вміст .env файлу (мінімум: GENERIC_TIMEZONE, опціонально: N8N_HOST, N8N_PROTOCOL, WEBHOOK_URL)"
-        required: true
 
 jobs:
   deploy:
@@ -28,17 +22,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Setup SSH agent
-        uses: webfactory/ssh-agent@v0.7.0
-        with:
-          ssh-private-key: ${{ github.event.inputs.ssh_key }}
-
       - name: Deploy to VPS
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ github.event.inputs.ssh_host }}
           username: ${{ github.event.inputs.ssh_user }}
           port: ${{ github.event.inputs.ssh_port }}
+          key: ${{ secrets.SSH_SECRET }}
           script: |
             set -e
 
@@ -46,9 +36,9 @@ jobs:
             mkdir -p /opt/n8n
             cd /opt/n8n
 
-            # Створюємо .env файл через heredoc
+            # Створюємо .env файл через heredoc з GitHub Secret
             cat <<EOF > .env
-            ${{ github.event.inputs.env_file }}
+            ${{ secrets.ENV_FILE }}
             EOF
 
             # Завантажуємо docker-compose.yml з репозиторію

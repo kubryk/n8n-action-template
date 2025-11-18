@@ -62,14 +62,41 @@ docker compose up -d
 
 Workflow дозволяє автоматично деплоїти на VPS через GitHub Actions. Для використання:
 
-1. Перейдіть в Actions → Deploy n8n
-2. Натисніть "Run workflow"
+### Налаштування Secrets
+
+Спочатку створіть GitHub Secrets для безпечного зберігання конфіденційних даних:
+
+1. Перейдіть в **Settings** → **Secrets and variables** → **Actions**
+2. Натисніть **New repository secret**
+3. Створіть два secrets:
+
+   **`SSH_SECRET`** - ваш SSH приватний ключ (весь ключ, включаючи `-----BEGIN ... -----END` рядки)
+   ```
+   -----BEGIN OPENSSH PRIVATE KEY-----
+   b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAAB...
+   ...
+   -----END OPENSSH PRIVATE KEY-----
+   ```
+
+   **`ENV_FILE`** - вміст .env файлу (кожна змінна на окремому рядку)
+   ```
+   N8N_HOST=yourdomain.com
+   N8N_PROTOCOL=https
+   WEBHOOK_URL=https://yourdomain.com/
+   GENERIC_TIMEZONE=Europe/Kyiv
+   ```
+
+### Запуск деплою
+
+1. Перейдіть в **Actions** → **Deploy n8n**
+2. Натисніть **Run workflow**
 3. Введіть дані вашого VPS:
-   - SSH Host (IP або домен)
-   - SSH User
-   - SSH Port (за замовчуванням 22)
-   - SSH Private Key (PEM формат)
-   - Вміст .env файлу
+   - **SSH Host** (IP або домен)
+   - **SSH User** (ім'я користувача)
+   - **SSH Port** (за замовчуванням 22)
+4. Натисніть **Run workflow**
+
+**Примітка:** SSH ключ та .env файл тепер зберігаються в GitHub Secrets, тому їх не потрібно вводити щоразу.
 
 ## Ліцензія
 
